@@ -60,11 +60,11 @@ router.get('/logout', (req, res) => {
   };
 });
 
-function generateToken(user) {
+function generateToken(userToken) {
 
   const payload = {
-    subject: user.id,
-    username: user.username,
+    subject: userToken.id,
+    username: userToken.username,
   };
 
   const options = {
