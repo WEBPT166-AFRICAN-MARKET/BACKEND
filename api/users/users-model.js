@@ -5,6 +5,7 @@ module.exports = {
     find,
     findBy,
     findById,
+    isValid
 }
 
 function find() {
@@ -22,4 +23,8 @@ function findById(id) {
 async function add(user) {
     const [id] = await db('users').insert(user, 'id');
     return findById(id);
+}
+
+function isValid(user) {
+    return Boolean(user.username && user.password && typeof user.password === 'string')
 }

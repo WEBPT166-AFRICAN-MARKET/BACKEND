@@ -9,18 +9,24 @@ const Users = require('../users/users-model.js');
 router.post('/register', (req, res) => {
   const user = req.body;
 
-  const hash = bcrypt.hashSync(user.password, 10);
-
-  user.password = hash;
-
-  Users.add(user)
-  .then(newUser => {
-    res.status(201).json(newUser);
-  })
-  .catch(err => {
-    res.status(500).json({ message: 'username taken', err});
-  })
-});
+  if(Users.isValid(user)) {
+    const hash = bcrypt.hashSync(user.password, 10);
+    user.password = hash;
+    
+    Users.add(user)
+    .then(newUser => {
+      const token = generateToken(newUser)
+      res.status(201).json({
+        newUser: newUser,
+        token: token,
+        message: 'Successful Registeration'
+      });
+    })
+    .catch(err => res.status(500).json({message: err.message}))
+  } else {
+    res.status(400).json({message: 'username and password are required'})
+  }
+})
 
 router.post('/login', async (req, res, next) => {
   const { username, password } = req.body;
