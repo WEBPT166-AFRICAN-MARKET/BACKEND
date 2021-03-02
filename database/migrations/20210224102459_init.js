@@ -12,6 +12,12 @@ exports.up = function(knex) {
       tbl.string('location', 256).notNullable();
       tbl.string('description', 156).notNullable();
       tbl.integer('price').notNullable();
+      tbl.integer('user_id')
+      .unsigned()
+      .notNullable()
+      .references('users.id')
+      .onDelete('CASCADE')
+      .onUpdate('CASCADE')
   })
 };
 
