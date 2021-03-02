@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const secrets = require('../config/secrets.js');
-const { isValid } = require("../users/users-service.js");
+const { isValid } = require("../users/users-model.js");
 
 const Users = require('../users/users-model.js');
 
@@ -60,11 +60,11 @@ router.get('/logout', (req, res) => {
   };
 });
 
-function generateToken(userToken) {
+function generateToken(user) {
 
   const payload = {
-    subject: userToken.id,
-    username: userToken.username,
+    subject: user.id,
+    username: user.username,
   };
 
   const options = {
