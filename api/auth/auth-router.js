@@ -6,17 +6,7 @@ const { isValid } = require("../users/users-service.js");
 
 const Users = require('../users/users-model.js');
 
-function userCheck(req, res, next) {
-  const user = req.body;
-
-  if (user.username && user.password) {
-    next();
-  } else {
-    res.status(400).json({ message: 'username and password required'});
-  }
-}
-
-router.post('/register', userCheck, (req, res) => {
+router.post('/register', (req, res) => {
   const user = req.body;
 
   const hash = bcrypt.hashSync(user.password, 10);
@@ -72,7 +62,7 @@ function generateToken(user) {
   };
 
   const options = {
-    expiresIn: "1d"
+    expiresIn: "1h"
   };
 
   const token = jwt.sign(payload, secrets.jwtSecret, options);
