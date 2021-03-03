@@ -14,7 +14,6 @@ describe('post /auth/register', () => {
     beforeAll(async () => {
         //await db('users').truncate();
         res = await request(server).post('/api/auth/register').send({ username: 'mhillin', password: 'password123' })
-        console.log(res)
     });
 
     it('uses json', () => {
@@ -25,7 +24,6 @@ describe('post /auth/register', () => {
 describe('post /auth/login', () => {
     beforeAll(async () => {
         res = await request(server).post('/api/auth/login').send({  username: 'mhillin', password: 'password123'  });
-        console.log(res.body)
     });
 
     it('uses json', () => {
