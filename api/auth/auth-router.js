@@ -49,34 +49,6 @@ router.post('/login', (req, res) => {
   }
 });
 
-router.get('/refresh', async (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    next({ apiCode: 400, apiMessage: 'no authorization' });
-  }
-
-  const { user, exp } = jwt.decode(token);
-
-  if (exp > Date.now()) {
-    res.status(403).send({
-      message: 'no authorization',
-    });
-  }
-
-  const currentUser = await Users.findById(user.id);
-
-  if (!currentUser) {
-    res.status(403).send({
-      message: 'no authorization',
-    });
-  }
-
-  res.status(200).send({
-    user: { id: currentUser.id, username: currentUser.username },
-    token: generateToken(user),
-  });
-});
-
 router.get('/logout', (req, res) => {
   if (req.session) {
     req.session.destroy((err) => {
