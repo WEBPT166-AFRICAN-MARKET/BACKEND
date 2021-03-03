@@ -3,8 +3,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const secrets = require('../config/secrets.js');
 
-const { isValid } = require("../users/users-model.js");
-
 const Users = require('../users/users-model.js');
 
 router.post('/register', (req, res) => {
@@ -23,7 +21,7 @@ router.post('/register', (req, res) => {
           message: 'Successful Registeration',
         });
       })
-      .catch((err) => res.status(500).json({ message: err.message }));
+      .catch((err) => res.status(500).json({ message: `Error accessing the database ${err.message}` }));
   } else {
     res.status(400).json({ message: 'username and password are required' });
   }
@@ -49,6 +47,34 @@ router.post('/login', (req, res) => {
   } else {
     res.status(400).json({ message: 'Please provide a username and password' })
   }
+});
+
+router.get('/refresh', async (req, res, next) => {
+  const token = req.headers.authorization;
+  if (!token) {
+    next({ apiCode: 400, apiMessage: 'no authorization' });
+  }
+
+  const { user, exp } = jwt.decode(token);
+
+  if (exp > Date.now()) {
+    res.status(403).send({
+      message: 'no authorization',
+    });
+  }
+
+  const currentUser = await Users.findById(user.id);
+
+  if (!currentUser) {
+    res.status(403).send({
+      message: 'no authorization',
+    });
+  }
+
+  res.status(200).send({
+    user: { id: currentUser.id, username: currentUser.username },
+    token: generateToken(user),
+  });
 });
 
 router.get('/logout', (req, res) => {
